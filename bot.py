@@ -10,6 +10,7 @@ from db_setup import init_db
 from gmail_tool import search_emails
 from calendar_tool import get_upcoming_events, create_event
 from search_tool import web_search
+from time_tool import get_current_time
 from voice_tool import transcribe_audio, synthesize_speech
 from conversation import save_message, get_recent_history
 
@@ -87,6 +88,20 @@ TOOLS = [
                 "required": ["query"]
             }
         }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_time",
+            "description": "Get the accurate current date and time. Always use this instead of guessing when asked about the current time or date.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "timezone_str": {"type": "string", "description": "IANA timezone name, e.g. Asia/Jakarta. Defaults to Asia/Jakarta (WIB) if not specified."}
+                },
+                "required": []
+            }
+        }
     }
 ]
 
@@ -104,6 +119,8 @@ def call_tool(tool_name, args):
         )
     elif tool_name == "web_search":
         return web_search(args.get("query", ""))
+    elif tool_name == "get_current_time":
+        return get_current_time(args.get("timezone_str", "Asia/Jakarta"))
     return "Unknown tool."
 
 
